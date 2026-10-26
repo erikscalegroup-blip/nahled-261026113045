@@ -1,0 +1,342 @@
+@import "tailwindcss" source(none);
+@source "../src";
+
+/*
+ * CORALPOOL — dizajnový systém „MONOLIT".
+ * Paleta je uzavretá: piesok, cement, cement-tmavy, hlbka, voda, biela.
+ * Žiadne karty, žiadne tiene, žiadne gradienty okrem jedného.
+ */
+
+@theme inline {
+  --color-piesok: var(--piesok);
+  --color-cement: var(--cement);
+  --color-cement-tmavy: var(--cement-tmavy);
+  --color-hlbka: var(--hlbka);
+  --color-voda: var(--voda);
+  --color-biela: var(--biela);
+
+  --color-background: var(--piesok);
+  --color-foreground: var(--hlbka);
+  --color-muted-foreground: var(--cement-tmavy);
+  --color-border: var(--cement);
+
+  --font-nadpis: "Fraunces", Georgia, serif;
+  --font-text: "Instrument Sans", "Archivo", system-ui, sans-serif;
+  --font-cislo: "Martian Mono", ui-monospace, monospace;
+}
+
+:root {
+  --piesok: oklch(0.9327 0.012 79.78);
+  --cement: oklch(0.8218 0.0136 82.4);
+  --cement-tmavy: oklch(0.629 0.0163 80.68);
+  --hlbka: oklch(0.268 0.0374 222.01);
+  --voda: oklch(0.5468 0.0801 216.92);
+  --biela: oklch(1 0 0);
+}
+
+@layer base {
+  * {
+    border-color: var(--cement);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--piesok);
+    color: var(--hlbka);
+    font-family: var(--font-text);
+    font-size: 19px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-nadpis);
+    font-variation-settings: "SOFT" 0, "WONK" 1;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    max-width: 68ch;
+  }
+
+  ::selection {
+    background: var(--hlbka);
+    color: var(--piesok);
+  }
+}
+
+@utility mono {
+  font-family: var(--font-cislo);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@utility sekcia {
+  padding-block: 88px;
+}
+
+@media (min-width: 768px) {
+  .sekcia {
+    padding-block: 140px;
+  }
+}
+
+/* Odhalenie nadpisov po riadkoch */
+.riadok {
+  overflow: hidden;
+  display: block;
+  padding-bottom: 0.24em;
+  margin-bottom: -0.24em;
+}
+
+.riadok > span {
+  display: block;
+  clip-path: inset(100% 0 0 0);
+  transform: translateY(0.35em);
+  transition:
+    clip-path 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.je-vidno .riadok > span {
+  clip-path: inset(0 0 0 0);
+  transform: translateY(0);
+}
+
+/* Odkrytie fotiek */
+.fotka-obal {
+  overflow: hidden;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.je-vidno.fotka-obal,
+.je-vidno .fotka-obal {
+  clip-path: inset(0 0 0 0);
+}
+
+.fotka-obal img {
+  transform: scale(1.08);
+  transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.je-vidno.fotka-obal img,
+.je-vidno .fotka-obal img {
+  transform: scale(1);
+}
+
+/* Text pri odhalení */
+.tichy {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.je-vidno .tichy,
+.je-vidno.tichy {
+  opacity: 1;
+  transform: none;
+}
+
+/* Voda pod hladinou */
+.pod-hladinou {
+  filter: saturate(1.15) hue-rotate(-4deg);
+}
+
+/* Plus / krížik z pseudoelementov */
+.plus {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.plus::before,
+.plus::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1px;
+  background: var(--hlbka);
+}
+
+.plus::after {
+  inset: 0 50% 0 auto;
+  width: 1px;
+  height: auto;
+}
+
+.plus.otvoreny {
+  transform: rotate(45deg);
+}
+
+.pole {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--piesok) 35%, transparent);
+  color: var(--piesok);
+  font-family: var(--font-text);
+  font-size: 17px;
+  padding: 10px 0;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.4s ease;
+}
+
+.pole:focus {
+  border-bottom-color: var(--piesok);
+}
+
+.pole::placeholder {
+  color: color-mix(in oklab, var(--piesok) 55%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+
+  .riadok > span,
+  .fotka-obal {
+    clip-path: none;
+    transform: none;
+  }
+
+  .tichy {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- Živé prvky ---- */
+
+/* Bežiaci pás */
+.beh {
+  display: flex;
+  width: max-content;
+  animation: beh 38s linear infinite;
+}
+
+.beh:hover {
+  animation-play-state: paused;
+}
+
+@keyframes beh {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Hlavné CTA — plynulé zaliatie farbou */
+.cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--voda);
+  transform: translateY(101%);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cta:hover::after,
+.cta:focus-visible::after {
+  transform: translateY(0);
+}
+
+/* Podčiarknutie odkazov */
+.odkaz {
+  position: relative;
+}
+
+.odkaz::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.odkaz:hover::after,
+.odkaz:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Jemné plávanie (šípka nadol) */
+.plavat {
+  animation: plavat 2.6s ease-in-out infinite;
+}
+
+@keyframes plavat {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+}
+
+/* Dýchajúci akcent pri číslach */
+.iskra::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 10px;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: var(--voda);
+  animation: iskra 3s ease-in-out infinite;
+}
+
+@keyframes iskra {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
